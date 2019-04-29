@@ -4,8 +4,8 @@
           <el-form-item>
               <img class="avatar" src="../assets/avatar.jpg" alt="头像">
           </el-form-item>
-          <el-form-item prop="userName">
-              <el-input prefix-icon="myicon myicon-user" v-model="loginForm.userName"></el-input>
+          <el-form-item prop="username">
+              <el-input prefix-icon="myicon myicon-user" v-model="loginForm.username"></el-input>
           </el-form-item>
           <el-form-item prop="password">
               <el-input prefix-icon="myicon myicon-key" v-model="loginForm.password" type="password"></el-input>
@@ -17,16 +17,17 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
       loginForm: {
-        userName: '',
+        username: '',
         password: ''
       },
       // 校验规则
       loginRules: {
-        userName: [
+        username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
         password: [
@@ -41,8 +42,18 @@ export default {
     handLogin () {
       this.$refs.loginRef.validate((isPass) => {
         if (isPass) {
-          console.log('发送请求')
+          axios.post('http://localhost:8888/api/private/v1/login', this.loginForm)
+            .then(res => {
+              console.log(res)
+              if (res.data.meta.status === 200) {
+                // 跳转到首页
+                this.$router.push({ name: 'home' })
+              } else {
+                this.$message.error(res.data.meta.msg)
+              }
+            })
         } else {
+          this.$message.error('校验未通过，请重新输入')
           return false
         }
       })
