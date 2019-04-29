@@ -8,7 +8,10 @@
               <el-input prefix-icon="myicon myicon-user" v-model="loginForm.username"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-              <el-input prefix-icon="myicon myicon-key" v-model="loginForm.password" type="password"></el-input>
+              <el-input prefix-icon="myicon myicon-key" v-model="loginForm.password"
+              type="password"
+              @keydown.enter.native="handLogin">
+              </el-input>
           </el-form-item>
           <el-form-item>
               <el-button type="primary" class="login-btn" @click="handLogin">登录</el-button>
@@ -17,7 +20,7 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
+import {login} from '@/api'
 export default {
   data () {
     return {
@@ -42,7 +45,7 @@ export default {
     handLogin () {
       this.$refs.loginRef.validate((isPass) => {
         if (isPass) {
-          axios.post('http://localhost:8888/api/private/v1/login', this.loginForm)
+          login(this.loginForm)
             .then(res => {
               console.log(res)
               if (res.data.meta.status === 200) {
